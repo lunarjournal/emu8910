@@ -1,212 +1,65 @@
-// Copyright (C) 
-// Author: Dylan Muller
+// Copyright (C)
+// AY8910 emulator.
+// Author: Dylan Muller.
 
 const YM_CLOCK_ZX = 1750000;
-const FIR = 
-
-[-0.000058, 
-    0.000024, 
-    0.000088, 
-    -0.000003, 
-    -0.000116, 
-    -0.000035, 
-    0.000137, 
-    0.000089, 
-    -0.000143, 
-    -0.000156, 
-    0.000126, 
-    0.000231, 
-    -0.000079, 
-    -0.000304, 
-    -0.000002, 
-    0.000362, 
-    0.000117, 
-    -0.000390, 
-    -0.000261, 
-    0.000375, 
-    0.000423, 
-    -0.000304, 
-    -0.000585, 
-    0.000168, 
-    0.000726, 
-    0.000033, 
-    -0.000821, 
-    -0.000294, 
-    0.000845, 
-    0.000596, 
-    -0.000775, 
-    -0.000915, 
-    0.000593, 
-    0.001215, 
-    -0.000292, 
-    -0.001456, 
-    -0.000121, 
-    0.001594, 
-    0.000626, 
-    -0.001589, 
-    -0.001186, 
-    0.001405, 
-    0.001751, 
-    -0.001025, 
-    -0.002258, 
-    0.000444, 
-    0.002638, 
-    0.000316, 
-    -0.002820, 
-    -0.001211, 
-    0.002743, 
-    0.002175, 
-    -0.002360, 
-    -0.003117, 
-    0.001647, 
-    0.003933, 
-    -0.000611, 
-    -0.004512, 
-    -0.000705, 
-    0.004744, 
-    0.002222, 
-    -0.004535, 
-    -0.003825, 
-    0.003817, 
-    0.005369, 
-    -0.002558, 
-    -0.006686, 
-    0.000773, 
-    0.007598, 
-    0.001470, 
-    -0.007929, 
-    -0.004048, 
-    0.007523, 
-    0.006783, 
-    -0.006258, 
-    -0.009449, 
-    0.004059, 
-    0.011782, 
-    -0.000908, 
-    -0.013485, 
-    -0.003144, 
-    0.014246, 
-    0.007982, 
-    -0.013741, 
-    -0.013425, 
-    0.011632, 
-    0.019237, 
-    -0.007546, 
-    -0.025141, 
-    0.000999, 
-    0.030835, 
-    0.008787, 
-    -0.036013, 
-    -0.023415, 
-    0.040387, 
-    0.047128, 
-    -0.043707, 
-    -0.095861, 
-    0.045780, 
-    0.314841, 
-    0.453515, 
-    0.314841, 
-    0.045780, 
-    -0.095861, 
-    -0.043707, 
-    0.047128, 
-    0.040387, 
-    -0.023415, 
-    -0.036013, 
-    0.008787, 
-    0.030835, 
-    0.000999, 
-    -0.025141, 
-    -0.007546, 
-    0.019237, 
-    0.011632, 
-    -0.013425, 
-    -0.013741, 
-    0.007982, 
-    0.014246, 
-    -0.003144, 
-    -0.013485, 
-    -0.000908, 
-    0.011782, 
-    0.004059, 
-    -0.009449, 
-    -0.006258, 
-    0.006783, 
-    0.007523, 
-    -0.004048, 
-    -0.007929, 
-    0.001470, 
-    0.007598, 
-    0.000773, 
-    -0.006686, 
-    -0.002558, 
-    0.005369, 
-    0.003817, 
-    -0.003825, 
-    -0.004535, 
-    0.002222, 
-    0.004744, 
-    -0.000705, 
-    -0.004512, 
-    -0.000611, 
-    0.003933, 
-    0.001647, 
-    -0.003117, 
-    -0.002360, 
-    0.002175, 
-    0.002743, 
-    -0.001211, 
-    -0.002820, 
-    0.000316, 
-    0.002638, 
-    0.000444, 
-    -0.002258, 
-    -0.001025, 
-    0.001751, 
-    0.001405, 
-    -0.001186, 
-    -0.001589, 
-    0.000626, 
-    0.001594, 
-    -0.000121, 
-    -0.001456, 
-    -0.000292, 
-    0.001215, 
-    0.000593, 
-    -0.000915, 
-    -0.000775, 
-    0.000596, 
-    0.000845, 
-    -0.000294, 
-    -0.000821, 
-    0.000033, 
-    0.000726, 
-    0.000168, 
-    -0.000585, 
-    -0.000304, 
-    0.000423, 
-    0.000375, 
-    -0.000261, 
-    -0.000390, 
-    0.000117, 
-    0.000362, 
-    -0.000002, 
-    -0.000304, 
-    -0.000079, 
-    0.000231, 
-    0.000126, 
-    -0.000156, 
-    -0.000143, 
-    0.000089, 
-    0.000137, 
-    -0.000035, 
-    -0.000116, 
-    -0.000003, 
-    0.000088, 
-    0.000024, 
-    -0.000058] ;
-
-
+const FIR = [-0.011368,
+    0.004512,
+    0.008657,
+    -0.011763,
+    -0.000000,
+    0.012786,
+    -0.010231,
+    -0.005801,
+    0.015915,
+    -0.006411,
+    -0.012504,
+    0.017299,
+    -0.000000,
+    -0.019605,
+    0.016077,
+    0.009370,
+    -0.026526,
+    0.011074,
+    0.022508,
+    -0.032676,
+    0.000000,
+    0.042011,
+    -0.037513,
+    -0.024362,
+    0.079577,
+    -0.040604,
+    -0.112540,
+    0.294080,
+    0.625000,
+    0.294080,
+    -0.112540,
+    -0.040604,
+    0.079577,
+    -0.024362,
+    -0.037513,
+    0.042011,
+    0.000000,
+    -0.032676,
+    0.022508,
+    0.011074,
+    -0.026526,
+    0.009370,
+    0.016077,
+    -0.019605,
+    -0.000000,
+    0.017299,
+    -0.012504,
+    -0.006411,
+    0.015915,
+    -0.005801,
+    -0.010231,
+    0.012786,
+    -0.000000,
+    -0.011763,
+    0.008657,
+    0.004512,
+    -0.011368]
 
 interface Channel{
 
@@ -271,7 +124,7 @@ class Interpolator{
 
     cubic(mu : number){
 
-        let b = this.buffer; 
+        let b = this.buffer;
         let a0,a1,a2,a3,mu2 = 0;
         mu2 = mu * mu2;
         a0 = b[3] - b[2] - b[0] + b[1];
@@ -292,7 +145,7 @@ class BiasFilter {
     length : number = 0x0;
     sum: number = 0x0;
     attenuate : number = 0x0;
-    
+
     constructor(length : number, attenuate : number){
 
         this.length = length;
@@ -309,7 +162,7 @@ class BiasFilter {
         let delta = x - this.samples[index];
         let attenuate = this.attenuate;
         let avg = 0x0;
-        
+
         this.sum += delta;
         this.samples[index] = x;
 
@@ -367,7 +220,7 @@ class FirFilter {
             buffer[this.offset + length - m + i] = buffer[this.offset + i];
         }
 
-      
+
         return y;
 
     }
@@ -387,9 +240,9 @@ class AudioDriver {
 
         this.device = new AudioContext();
         let device = this.device;
-      
+
         this.filter = [
-            
+
             new BiasFilter(1024, 1.25),
             new BiasFilter(1024, 1.25),
 
@@ -400,13 +253,13 @@ class AudioDriver {
         let filter = this.filter;
 
         filter[2].type = "lowshelf";
-        filter[2].frequency.value = 1500;
-        filter[2].gain.value = 3.35;
+        filter[2].frequency.value = 10000;
+        filter[2].gain.value = 2;
 
         filter[3].type = "lowpass";
         filter[3].frequency.value = 10000;
         filter[3].Q.value = 1;
-        
+
         this.frequency = device.sampleRate;
         this.context = device.createScriptProcessor(4096,0,2);
         this.context.onaudioprocess = this.update;
@@ -421,10 +274,10 @@ class AudioDriver {
     }
 
     update = function(ev : AudioProcessingEvent){
-    
+
         let ch0 = ev.outputBuffer.getChannelData(0);
         let ch1 = ev.outputBuffer.getChannelData(1);
-      
+
         let host = this.host;
         let filter = this.filter;
         let bias = this.bias;
@@ -432,9 +285,9 @@ class AudioDriver {
         let port = [0, 0];
 
         for(let i = 0; i < ch0.length; i++){
-    
+
             output = host.step();
-          
+
             port[0] = filter[0].step(output[0]);
             port[1] = filter[1].step(output[1]);
 
@@ -458,7 +311,7 @@ enum PSG49_LUT{
     ENV_FINE,
     ENV_COARSE,
     ENV_SHAPE
-    
+
 }
 class PSG49 {
 
@@ -481,6 +334,10 @@ class PSG49 {
 
         NOISE_PERIOD: 0x0,
 
+        // bit position
+        // 5  4  3  2  1  0
+        // NC NB NA TC TB TA
+        // T = Tone, N = Noise
         MIXER: 0x0,
 
         A_VOL: 0x0,
@@ -497,7 +354,7 @@ class PSG49 {
     constructor(clockRate : number, intRate : number){
 
         this.driver = new AudioDriver(this);
-        this.interpolate = [ 
+        this.interpolate = [
             new Interpolator(),
             new Interpolator()
         ];
@@ -508,7 +365,7 @@ class PSG49 {
             new FirFilter(FIR, m)
         ];
         this.oversample = m;
-    
+
         this.clock = {
             frequency : clockRate,
             scale : 1/16 * 2,
@@ -531,21 +388,21 @@ class PSG49 {
             stub : []
 
         } as Envelope;
-  
-        this.channels = [ 
+
+        this.channels = [
             {
                 counter : 0x0,
                 pan : 0.5,
-            } as Channel, 
-            {
-                counter : 0x0,
-                pan : 0.5
             } as Channel,
             {
                 counter : 0x0,
                 pan : 0.5
             } as Channel,
-            
+            {
+                counter : 0x0,
+                pan : 0.5
+            } as Channel,
+
             {counter : 0x0} as Channel
         ]
 
@@ -590,23 +447,23 @@ class PSG49 {
         stub.reset = (ev : Envelope)=>{
             let strobe = ev.strobe;
             let transient = ev.transient;
-   
+
             switch(ev.offset){
 
-                case 0x4: 
+                case 0x4:
                     transient = 0;
-                case 0x0: 
+                case 0x0:
                     ev.step = strobe ? transient : 31;
                     break;
-                case 0x5: 
+                case 0x5:
                     transient = 31;
-                case 0x1: 
+                case 0x1:
                     ev.step = strobe ? transient : 0;
                     break;
                 case 0x2: ev.step = 31;
                     break;
                 case 0x3: ev.step = 0;
-                    break; 
+                    break;
             }
     }
 
@@ -637,10 +494,10 @@ class PSG49 {
             [stub.grow,  stub.grow],
             [stub.decay, stub.grow],
             [stub.grow,  stub.decay],
-            
+
         ];
     }
-    
+
     clamp(){
         let r = this.register;
 
@@ -649,13 +506,13 @@ class PSG49 {
 
         r.A_COARSE &= 0xf; r.B_COARSE &=0xf;
         r.C_COARSE &= 0xf; r.ENV_COARSE &= 0xff;
-        
+
         r.A_VOL &= 0x1f; r.B_VOL &= 0x1f;
         r.C_VOL &= 0x1f;
 
         r.NOISE_PERIOD &= 0x1f; r.MIXER &= 0x3f;
-        r.ENV_SHAPE &= 0xff; 
-        
+        r.ENV_SHAPE &= 0xff;
+
     }
 
     map(){
@@ -690,19 +547,19 @@ class PSG49 {
         channel[0].envelope = (r.A_VOL & 0x10) ? 0 : 1;
         channel[1].envelope = (r.B_VOL & 0x10) ? 0 : 1;
         channel[2].envelope = (r.C_VOL & 0x10) ? 0 : 1;
-        
+
          // update channel noise period
         channel[3].period = r.NOISE_PERIOD << 1;
 
         ev.period = r.ENV_FINE | r.ENV_COARSE << 8;
         ev.shape = r.ENV_SHAPE;
 
-         
+
         switch(ev.shape){
-            
+
             case 0x0: case 0x1:
             case 0x2: case 0x3:
-            case 0x9: 
+            case 0x9:
                 ev.transient = 0;
                 ev.offset = 0;
                 r.ENV_SHAPE = 0xff;
@@ -723,22 +580,22 @@ class PSG49 {
                 ev.offset = 1;
                 r.ENV_SHAPE = 0xff;
                 break;
-            case 0x8: 
+            case 0x8:
                 ev.offset = 2;
                 break;
-            case 0xc: 
+            case 0xc:
                 ev.offset = 3;
                 break;
-            case 0xa: 
+            case 0xa:
                 ev.offset = 4;
                 break;
-            case 0xe: 
+            case 0xe:
                 ev.offset = 5;
-                break;           
+                break;
 
         }
             if(ev.shape != ev.store){
-                ev.strobe = 0x0;    
+                ev.strobe = 0x0;
                 ev.counter = 0x0;
                 ev.stub.reset(ev);
 
@@ -754,7 +611,7 @@ class PSG49 {
 
         let period = (ch.period == 0x0) ? 0x1 : ch.period;
         ch.counter += step;
-        
+
         if(ch.counter >= period){
             // 50% duty cycle
             port ^= 0x1;
@@ -770,7 +627,7 @@ class PSG49 {
 
         let step = this.clock.step;
         let ev = this.envelope;
-         
+
         ev.counter += step;
 
         if(ev.counter >= ev.period){
@@ -789,7 +646,7 @@ class PSG49 {
         let period = (ch.period == 0) ? 1 : ch.period;
 
         ch.counter += step;
-  
+
         if(ch.counter >= period){
             port ^= (((port & 1) ^ ((port >> 3) & 1)) << 17);
             port >>= 1;
@@ -798,7 +655,7 @@ class PSG49 {
         }
         return ch.port & 1;
     }
-    
+
     step_mixer(){
 
         let port = 0x0;
@@ -809,17 +666,17 @@ class PSG49 {
         let step = this.step_envelope();
 
         for(let i = 0; i < 3; i++){
-            
+
             let volume = ch[i].volume;
             let pan = ch[i].pan;
 
             port = this.step_tone(i) | ch[i].tone;
             port &= noise | ch[i].noise;
-            
+
             // todo: add dac volume table
             //bit*=toneChannel[i].volume;
             // mix each channel
-        
+
             if(!ch[i].envelope){
                 index = step;
             }else{
@@ -829,7 +686,7 @@ class PSG49 {
 
             port *= this.dac[index];
 
-            // clamp pan levels 
+            // clamp pan levels
             // distortion over +1 ?
 
             if(pan > 0.9){
@@ -843,12 +700,12 @@ class PSG49 {
             output[1] += port * (pan) ;
 
         }
-   
+
         return output;
     }
 
     step(){
-        
+
         let output = [];
         let clockStep = 0;
         let intStep = 0;
@@ -901,16 +758,16 @@ class PSG49 {
 
           interpolate[0].step(output[0]);
           interpolate[1].step(output[1]);
-          
+
         }
         sample_left[i] = interpolate[0].cubic(0.5);
         sample_right[i] = interpolate[1].cubic(0.5);
- 
+
 
     }
     output[0] = fir[0].step(sample_left);
     output[1] = fir[1].step(sample_right);
-    
+
         return output;
     }
 
