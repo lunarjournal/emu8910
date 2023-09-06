@@ -61,7 +61,7 @@
         emu8910.register.C_VOL = r[10];
 
         emu8910.register.ENV_FINE = r[11];
-        emu8910.register.ENV_COURSE = r[12];
+        emu8910.register.ENV_COARSE = r[12];
 
         if (r[13] != 0xff) {
             emu8910.register.ENV_SHAPE = r[13];
