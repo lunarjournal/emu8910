@@ -1,13 +1,14 @@
 
     var song;
     var emu8910 = new PSG49(YM_CLOCK_ZX, 50);
+    var currentSong = 0;
 
     var songs = [
-        "18_soundliner.fym",
+        "200km_nik-o.fym",
         "01_scalesmannmisfire.fym"
     ];
 
-    var currentSong = 0;
+
 
     loadAndPlay = function() {
         emu8910.driver.device.resume()
@@ -51,6 +52,10 @@
         emu8910.interrupt.routine = updateState;
         emu8910.clock.frequency = song.getClockRate()
         emu8910.interrupt.frequency = song.getFrameRate()
+        currentSong++
+        if(currentSong >= songs.length){
+            currentSong = 0;
+        }
     }
 
     document.addEventListener('click', loadAndPlay, false);
