@@ -32,8 +32,7 @@
 
     updateState = function() {
         var r = song.getNextFrame();
-
-        emu8910.register.A_FINE = r[0];
+        emu8910.register.A_FINE = r[0]
         emu8910.register.A_COARSE = r[1];
 
         emu8910.register.B_FINE = r[2];
@@ -43,18 +42,7 @@
         emu8910.register.C_COARSE = r[5];
         emu8910.register.NOISE_PERIOD = r[6];
 
-        var mix_tone_A = (r[7] & 1) << 0;
-        var mix_tone_B = ((r[7] >> 1) & 1) << 1;
-        var mix_tone_C = ((r[7] >> 2) & 1) << 2;
-
-        var mix_noise_A = ((r[7] >> 3) & 1) << 3;
-        var mix_noise_B = ((r[7] >> 4) & 1) << 4;
-        var mix_noise_C = ((r[7] >> 5) & 1) << 5;
-
-        var MIXER = (mix_tone_A | mix_tone_B | mix_tone_C
-                     | mix_noise_A | mix_noise_B | mix_noise_C);
-
-        emu8910.register.MIXER = MIXER;
+        emu8910.register.MIXER = r[7];
 
         emu8910.register.A_VOL = r[8];
         emu8910.register.B_VOL = r[9];
