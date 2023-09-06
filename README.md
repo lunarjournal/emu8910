@@ -9,6 +9,8 @@ This emulator also adds interrupt support (with variable frequency) for updating
 FIR filter data generated using:
 [https://www.arc.id.au/FilterDesign.html](https://www.arc.id.au/FilterDesign.html)
 
+Compile with `tsc emu8910.ts`.
+
 Files:
 
 * src/emu8910.ts - Core emulator implementation
