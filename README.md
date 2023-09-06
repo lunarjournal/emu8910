@@ -17,5 +17,6 @@ Files:
 * index.html - HTML boilerplate
 
 To run demo start web server: `python -m http.server 8000` and navigate to `index.html`.
+
 Then click anywhere on the page to start audio output.
 
