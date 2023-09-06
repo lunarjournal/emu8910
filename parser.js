@@ -2,20 +2,10 @@
     var song;
     var emu8910 = new PSG49(YM_CLOCK_ZX, 50);
 
-    Array.prototype.shuffle = function() {
-      var m = this.length, t, i;
-      while(m) {
-        i = Math.floor(Math.random() * m--);
-        t = this[m];
-        this[m] = this[i];
-        this[i] = t;
-      }
-      return this;
-    }
-
     var songs = [
+        "18_soundliner.fym",
         "01_scalesmannmisfire.fym"
-    ].shuffle();
+    ];
 
     var currentSong = 0;
 
