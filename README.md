@@ -11,6 +11,34 @@ FIR filter data generated using:
 
 Compile with `tsc emu8910.ts`.
 
+To use simply create a PSG49 object as follows:
+```
+var emu8910 = new PSG49(YM_CLOCK_ZX, 50);
+```
+
+Which sets the default clock speed and interrupt frequency. 
+
+To play a FYM module:
+```
+song = new FYMReader(<BUFFER>);
+emu8910.interrupt.routine = <ISR_FUNC>
+emu8910.clock.frequency = song.getClockRate()
+emu8910.interrupt.frequency = song.getFrameRate()
+```
+
+This sets the ISR function, clock and interrupt frequency for a specific song.
+
+To stop playback:
+```
+emu8910.driver.device.suspend()
+emu8910.interrupt.frequency = 0
+```
+To resume:
+```
+emu8910.driver.device.resume()
+emu8910.interrupt.frequency = song.getFrameRate()
+```
+
 Files:
 
 * src/emu8910.ts - Core emulator implementation
