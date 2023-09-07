@@ -26,7 +26,7 @@ emu8910.clock.frequency = song.getClockRate()
 emu8910.interrupt.frequency = song.getFrameRate()
 ```
 
-This sets the ISR function, clock and interrupt frequency for a specific song.
+This sets the ISR (Interrupt Service Routine) function, clock and interrupt frequency for a specific song.
 
 To stop playback:
 ```
@@ -38,6 +38,10 @@ To resume:
 emu8910.driver.device.resume()
 emu8910.interrupt.frequency = song.getFrameRate()
 ```
+
+Note: You can access the emulator's internal register file with `emu8910.register`.
+
+These registers need to be updated at the frequency of the ISR.
 
 Files:
 
