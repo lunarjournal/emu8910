@@ -47,7 +47,7 @@ Files:
 
 * `src/emu8910.ts` - Core emulator implementation
 * `fym.js` - FYM (Fast YM) format parser
-* `update.js` - Register parser
+* `parser.js` - Register parser
 * `index.html` - HTML boilerplate
 
 To run demo start web server: `python -m http.server 8000` and navigate to `index.html`.
