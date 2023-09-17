@@ -196,7 +196,7 @@ var AudioDriver = /** @class */ (function () {
         filter[2].connect(filter[3]);
         filter[3].connect(device.destination);
         this.host = host;
-        this.bias = 1 / 100;
+        this.bias = 0;
     }
     return AudioDriver;
 }());
