@@ -269,7 +269,7 @@ class AudioDriver {
         filter[3].connect(device.destination);
 
         this.host = host;
-        this.bias = 1/100;
+        this.bias = 0;
 
     }
 
