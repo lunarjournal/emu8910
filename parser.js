@@ -8,8 +8,6 @@
         "01_scalesmannmisfire.fym"
     ];
 
-
-
     loadAndPlay = function() {
         emu8910.driver.device.resume()
         var oReq = new XMLHttpRequest();
