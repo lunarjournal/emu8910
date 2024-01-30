@@ -17,8 +17,27 @@ To use simply create a PSG49 object as follows:
 ```
 var emu8910 = new PSG49(YM_CLOCK_ZX, 50);
 ```
-
 Which sets the default clock speed and interrupt frequency. 
+
+This exposes a a PSG register file in the `emu8910.register` object:
+```
+emu8910.register.A_FINE
+emu8910.register.A_COARSE
+emu8910.register.B_FINE
+emu8910.register.B_COARSE
+emu8910.register.C_FINE
+emu8910.register.C_COARSE
+emu8910.register.NOISE_PERIOD
+emu8910.register.MIXER
+emu8910.register.A_VOL
+emu8910.register.B_VOL
+emu8910.register.C_VOL
+emu8910.register.ENV_FINE
+emu8910.register.ENV_COARSE
+emu8910.register.ENV_SHAPE
+```
+
+The register file is then used to control the PSG or extract state information.
 
 To play a FYM module:
 ```
