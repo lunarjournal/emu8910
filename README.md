@@ -3,7 +3,7 @@
 This repository contains a Typescript implementation of General Instrument's [AY-3-8910](https://en.wikipedia.org/wiki/General_Instrument_AY-3-8910) PSG (programmable sound generator).
 It implements most of the PSG's original registers. A datasheet can be found [here](http://map.grauw.nl/resources/sound/generalinstrument_ay-3-8910.pdf).
 
-Listen to it in action! [AYSir](https://drsnuggles.github.io/AYSir/?engine=lunar)
+**Listen to it in action!** [AYSir](https://drsnuggles.github.io/AYSir/?engine=lunar)
 
 Sound output is achieved in the browser through an `AudioContext()` hook. <br>
 This emulator also adds interrupt support (with variable frequency) for updating the PSG's registers.
