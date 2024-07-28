@@ -209,17 +209,20 @@ class FirFilter {
 
         this.offset = length - (index * m);
         let sub = buffer.slice(this.offset);
-        this.index = (index + 1) % (length / m - 1);
-        for( i = m -1; i >=0; i--){
-            buffer[this.offset + i] = samples[i];
+        
+        for( i = 0; i < m; i++){
+            buffer[this.offset + i - 1] = samples[i];
         }
+
         for( i = 0; i < h.length; i++){
             y += h[i] * (sub[i] + sub[h.length - i - 1]);
         }
+
         for( i = 0; i < m; i++){
             buffer[this.offset + length - m + i] = buffer[this.offset + i];
         }
-
+        
+        this.index = (index + 1) % (length / m - 1);
 
         return y;
 
