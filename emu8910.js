@@ -141,7 +141,7 @@ var FirFilter = /** @class */ (function () {
         var i = 0x0;
         this.offset = length - (index * m);
         var sub = buffer.slice(this.offset);
-        for (i = 0; i < 0; i++) {
+        for (i = 0; i < m; i++) {
             buffer[this.offset + i - 1] = samples[i];
         }
         for (i = 0; i < h.length; i++) {
