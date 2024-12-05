@@ -1,7 +1,9 @@
 # emu8910
 
 This repository contains a Typescript implementation of General Instrument's [AY-3-8910](https://en.wikipedia.org/wiki/General_Instrument_AY-3-8910) PSG (programmable sound generator).
-It implements most of the PSG's original registers. A datasheet can be found [here](http://map.grauw.nl/resources/sound/generalinstrument_ay-3-8910.pdf).
+
+It implements most of the PSG's original registers. <br>
+A datasheet can be found [here](http://map.grauw.nl/resources/sound/generalinstrument_ay-3-8910.pdf).
 
 **Listen to it in action!** <br>
 * [AYSir](https://drsnuggles.github.io/AYSir/?engine=lunar)
