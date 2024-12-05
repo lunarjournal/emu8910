@@ -66,9 +66,9 @@ These registers need to be updated at the frequency of the ISR.
 
 Files:
 
-* `src/emu8910.ts` - Core emulator implementation
+* `src/emu8910.ts` - core emulator implementation
 * `fym.js` - FYM (Fast YM) format parser
-* `parser.js` - Register parser
+* `parser.js` - register parser
 * `index.html` - HTML boilerplate
 
 To run demo start web server: `python -m http.server 8000` and navigate to `index.html`.
