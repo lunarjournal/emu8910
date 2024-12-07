@@ -16,7 +16,7 @@ FIR filter data generated using:
 
 Compile with `tsc emu8910.ts`.
 
-To use simply create a PSG49 object as follows:
+To use simply create a `PSG49` object as follows:
 ```
 var emu8910 = new PSG49(YM_CLOCK_ZX, 50);
 ```
