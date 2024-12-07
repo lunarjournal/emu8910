@@ -20,7 +20,7 @@ To use simply create a `PSG49` object as follows:
 ```
 var emu8910 = new PSG49(YM_CLOCK_ZX, 50);
 ```
-Which sets the default clock speed and interrupt frequency (50 Hz). 
+Which sets the default clock speed and interrupt frequency (`50 Hz`). 
 
 This exposes a a `PSG` register file in the `emu8910.register` object:
 ```
