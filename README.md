@@ -65,7 +65,7 @@ emu8910.interrupt.frequency = song.getFrameRate()
 
 Note: You can access the emulator's internal register file with `emu8910.register`.
 
-These registers need to be updated at the frequency of the ISR.
+These registers need to be updated at the frequency of the `ISR`.
 
 Files:
 
