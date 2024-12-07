@@ -1,15 +1,15 @@
 # emu8910
 
-This repository contains a `Typescript` implementation of General Instrument's [`AY8910`](https://en.wikipedia.org/wiki/General_Instrument_AY-3-8910) PSG (programmable sound generator).
+This repository contains a `Typescript` implementation of General Instrument's [`AY8910`](https://en.wikipedia.org/wiki/General_Instrument_AY-3-8910) `PSG` (programmable sound generator).
 
-It implements most of the PSG's original registers. <br>
+It implements most of the `PSG's` original registers. <br>
 A datasheet can be found [`here`](http://map.grauw.nl/resources/sound/generalinstrument_ay-3-8910.pdf).
 
 > **Listen to it in action!** <br>
 > [`AYSir`](https://drsnuggles.github.io/AYSir/?engine=lunar)
 
 Sound output is achieved in the browser through an `AudioContext()` hook. <br>
-This emulator also adds interrupt support (with variable frequency) for updating the PSG's registers.
+This emulator also adds interrupt support (with variable frequency) for updating the `PSG's` registers.
 
 FIR filter data generated using:
 [`https://www.arc.id.au/FilterDesign.html`](https://www.arc.id.au/FilterDesign.html).
@@ -22,7 +22,7 @@ var emu8910 = new PSG49(YM_CLOCK_ZX, 50);
 ```
 Which sets the default clock speed and interrupt frequency (50 Hz). 
 
-This exposes a a PSG register file in the `emu8910.register` object:
+This exposes a a `PSG` register file in the `emu8910.register` object:
 ```
 emu8910.register.A_FINE
 emu8910.register.A_COARSE
@@ -40,7 +40,7 @@ emu8910.register.ENV_COARSE
 emu8910.register.ENV_SHAPE
 ```
 
-The register file is then used to control the PSG or extract state information.
+The register file is then used to control the `PSG` or extract state information.
 
 To play a FYM module:
 ```
