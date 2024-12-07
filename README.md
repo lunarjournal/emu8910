@@ -6,7 +6,7 @@ It implements most of the PSG's original registers. <br>
 A datasheet can be found [`here`](http://map.grauw.nl/resources/sound/generalinstrument_ay-3-8910.pdf).
 
 > **Listen to it in action!** <br>
-> * [`AYSir`](https://drsnuggles.github.io/AYSir/?engine=lunar)
+> [`AYSir`](https://drsnuggles.github.io/AYSir/?engine=lunar)
 
 Sound output is achieved in the browser through an `AudioContext()` hook. <br>
 This emulator also adds interrupt support (with variable frequency) for updating the PSG's registers.
