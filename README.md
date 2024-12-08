@@ -76,5 +76,5 @@ Files:
 
 To run demo start web server: `python -m http.server 8000` and navigate to `index.html`.
 
-> Click anywhere on the page to start audio output.
+> Note: Click anywhere on the page to start audio output.
 
