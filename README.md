@@ -5,7 +5,7 @@ This repository contains a `Typescript` implementation of General Instrument's [
 It implements most of the `PSG's` original registers. <br>
 The offical datasheet for the `PSG` can be found [`here`](http://map.grauw.nl/resources/sound/generalinstrument_ay-3-8910.pdf).
 
-> **Web Player** <br>
+> **Online Player** <br>
 > [`AYSir`](https://drsnuggles.github.io/AYSir/?engine=lunar)
 
 Sound output is achieved in the browser through an `AudioContext()` hook. <br>
