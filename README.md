@@ -22,7 +22,7 @@ var emu8910 = new PSG49(YM_CLOCK_ZX, 50);
 ```
 Which sets the default clock speed (`1.75 MHz`) and interrupt frequency (`50 Hz`). 
 
-This exposes a a `PSG` register file in the `emu8910.register` object:
+This exposes a a `PSG` `register file` in the `emu8910.register` object:
 ```
 emu8910.register.A_FINE
 emu8910.register.A_COARSE
