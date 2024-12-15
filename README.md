@@ -9,7 +9,7 @@ The offical datasheet for the `PSG` can be found [`here`](http://map.grauw.nl/re
 > [`AYSir`](https://drsnuggles.github.io/AYSir/?engine=lunar)
 
 Sound output is achieved in the browser through an `AudioContext()` hook. <br>
-This emulator also adds interrupt support (with variable frequency) for updating the `PSG's` registers.
+This `emulator` also adds interrupt support (with variable frequency) for updating the `PSG's` registers.
 
 `FIR` filter data generated using:
 [`https://www.arc.id.au/FilterDesign.html`](https://www.arc.id.au/FilterDesign.html).
