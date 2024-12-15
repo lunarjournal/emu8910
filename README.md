@@ -40,7 +40,7 @@ emu8910.register.ENV_COARSE
 emu8910.register.ENV_SHAPE
 ```
 
-The register file is then used to control the `PSG` or extract state information.
+The `register file` is then used to control the `PSG` or extract state information.
 
 To play a FYM module:
 ```
