@@ -22,7 +22,7 @@ var emu8910 = new PSG49(YM_CLOCK_ZX, 50);
 ```
 Which sets the default clock speed (`1.75 MHz`) and interrupt frequency (`50 Hz`). 
 
-This exposes a a `PSG` `register file` in the `emu8910.register` object:
+This exposes a a `PSG` `register` file in the `emu8910.register` object:
 ```
 emu8910.register.A_FINE
 emu8910.register.A_COARSE
@@ -40,7 +40,7 @@ emu8910.register.ENV_COARSE
 emu8910.register.ENV_SHAPE
 ```
 
-The `register file` is then used to control the `PSG` or extract state information.
+The `register` file is then used to control the `PSG` or extract state information.
 
 To play a FYM module:
 ```
@@ -65,7 +65,7 @@ emu8910.driver.device.resume()
 emu8910.interrupt.frequency = song.getFrameRate()
 ```
 
-> Note: You can access the emulator's internal register file with `emu8910.register`.
+> Note: You can access the emulator's internal `register` file with `emu8910.register`.
 
 These registers need to be updated at the frequency of the `ISR`.
 
