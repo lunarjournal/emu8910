@@ -6,7 +6,7 @@ It implements most of the `PSG's` original registers. <br>
 The offical datasheet for the `PSG` can be found [`here`](http://map.grauw.nl/resources/sound/generalinstrument_ay-3-8910.pdf).
 
 > **Online Player/Emulator by DrSnuggles** <br>
-> [`AYSir`](https://drsnuggles.github.io/AYSir/?engine=lunar) [`source`](https://github.com/DrSnuggles/AYSir)
+> [`AYSir`](https://drsnuggles.github.io/AYSir/?engine=lunar) [[`source`](https://github.com/DrSnuggles/AYSir)]
 
 Sound output is achieved in the browser through an `AudioContext()` hook. <br>
 This `emulator` also adds interrupt support (with variable frequency) for updating the `PSG's` registers.
