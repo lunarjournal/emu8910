@@ -50,6 +50,8 @@ emu8910.clock.frequency = song.getClockRate()
 emu8910.interrupt.frequency = song.getFrameRate()
 ```
 
+> Note: You can download modules from [https://ftp.modland.com/pub/modules/](https://ftp.modland.com/pub/modules/)
+
 This sets the `ISR` (Interrupt Service Routine) function, `clock` and `interrupt` frequency for a specific module.
 
 To stop playback:
