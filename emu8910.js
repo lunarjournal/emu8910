@@ -2,6 +2,8 @@
  * @file emu8910.js
  * @brief Tiny AY8910 PSG Emulator - emu8910.js
  *
+ * Author: Dylan Müller
+ *
  * +---------------------------------------+
  * |   .-.         .-.         .-.         |
  * |  /   \       /   \       /   \        |
