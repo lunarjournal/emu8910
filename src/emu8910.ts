@@ -2,6 +2,8 @@
  * @file emu8910.ts
  * @brief Tiny AY8910 PSG Emulator - emu8910.ts
  *
+ * Author: Dylan Müller
+ *
  * +---------------------------------------+
  * |   .-.         .-.         .-.         |
  * |  /   \       /   \       /   \        |
