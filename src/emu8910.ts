@@ -50,63 +50,10 @@
  */
 
 const YM_CLOCK_ZX = 1750000;
-const FIR = [-0.011368,
-    0.004512,
-    0.008657,
-    -0.011763,
-    -0.000000,
-    0.012786,
-    -0.010231,
-    -0.005801,
-    0.015915,
-    -0.006411,
-    -0.012504,
-    0.017299,
-    -0.000000,
-    -0.019605,
-    0.016077,
-    0.009370,
-    -0.026526,
-    0.011074,
-    0.022508,
-    -0.032676,
-    0.000000,
-    0.042011,
-    -0.037513,
-    -0.024362,
-    0.079577,
-    -0.040604,
-    -0.112540,
-    0.294080,
-    0.625000,
-    0.294080,
-    -0.112540,
-    -0.040604,
-    0.079577,
-    -0.024362,
-    -0.037513,
-    0.042011,
-    0.000000,
-    -0.032676,
-    0.022508,
-    0.011074,
-    -0.026526,
-    0.009370,
-    0.016077,
-    -0.019605,
-    -0.000000,
-    0.017299,
-    -0.012504,
-    -0.006411,
-    0.015915,
-    -0.005801,
-    -0.010231,
-    0.012786,
-    -0.000000,
-    -0.011763,
-    0.008657,
-    0.004512,
-    -0.011368]
+
+const FIR_CUTOFF = 2000 // Hz
+const FIR_TAPS = 200 // N taps
+var FIR = [] // coeff
 
 interface Channel{
 
@@ -118,7 +65,6 @@ interface Channel{
     tone : number,
     noise : number,
     envelope : number
-
 }
 
 interface Envelope{
@@ -173,7 +119,7 @@ class Interpolator{
 
         let b = this.buffer;
         let a0,a1,a2,a3,mu2 = 0;
-        mu2 = mu * mu2;
+        mu2 = mu * mu;
         a0 = b[3] - b[2] - b[0] + b[1];
         a1 = b[0] - b[1] - a0;
         a2 = b[2] - b[0];
@@ -253,28 +199,30 @@ class FirFilter {
         let h = this.h;
         let y = 0x0;
         let i = 0x0;
+        let sub = [];
+		
+		this.offset = (index * m) % length;
 
-        this.offset = length - (index * m);
-        let sub = buffer.slice(this.offset);
-        
-        for( i = 0; i < m; i++){
-            buffer[this.offset + i - 1] = samples[i];
+		// Update the buffer with the current input samples
+        for (i = 0; i < m; i++) {
+            buffer[(this.offset + i) % length] = samples[i];
+        }
+	
+		// Create a 'sub' buffer that contains the most recent 'h.length' values in the circular buffer
+        for (i = 0; i < h.length; i++) {
+            sub[i] = buffer[(this.offset - i + length) % length];
         }
 
-        for( i = 0; i < h.length; i++){
-            y += h[i] * (sub[i] + sub[h.length - i - 1]);
+		// Perform the FIR filtering operation
+        for (i = 0; i < h.length; i++) {
+            y += h[i] * sub[i];
         }
 
-        for( i = 0; i < m; i++){
-            buffer[this.offset + length - m + i] = buffer[this.offset + i];
-        }
-        
-        this.index = (index + 1) % (length / m - 1);
-
+		// Update the index to the next position in the circular buffer
+        this.index = (index + 1) % (length / m);
         return y;
 
     }
-
 }
 
 class AudioDriver {
@@ -410,6 +358,9 @@ class PSG49 {
         ];
 
         let m = 8;
+		
+		FIR = this.gen_fir(FIR_TAPS, FIR_CUTOFF, this.driver.device.sampleRate)
+
         this.fir = [
             new FirFilter(FIR, m),
             new FirFilter(FIR, m)
@@ -516,7 +467,7 @@ class PSG49 {
                     break;
             }
     }
-
+	
         stub.grow = (ev: Envelope)=>{
 
             if(++ ev.step > 31 ){
@@ -547,6 +498,39 @@ class PSG49 {
 
         ];
     }
+
+    blackman_harris(N : number) {
+	  let window = new Array(N);
+	  
+	  for (let n = 0; n < N; n++) {
+		window[n] = 0.35875 - 0.48829 * Math.cos(2 * Math.PI * n / (N - 1)) +
+					0.14128 * Math.cos(4 * Math.PI * n / (N - 1)) -
+					0.01168 * Math.cos(6 * Math.PI * n / (N - 1));
+	  }
+	  
+	  return window;
+	}
+	
+    gen_fir(num_taps : number, cutoff : number, fs : number) {
+	  const window = this.blackman_harris(num_taps);  // Blackman-Harris
+	  const filter = new Array(num_taps);
+	  
+	  for (let i = 0; i < num_taps; i++) {
+		// Calculate the ideal filter coefficients (sinc function)
+		const n = i - (num_taps - 1) / 2;
+		
+		// Handle the special case when n == 0 to avoid division by zero
+		if (n === 0) {
+		  filter[i] = 2 * Math.PI * cutoff / fs;
+		} else {
+		  filter[i] = Math.sin(2 * Math.PI * cutoff * n / fs) / (Math.PI * n);
+		}
+
+		// Apply window function
+		filter[i] *= window[i];
+	  }
+	  return filter;
+    };
 
     clamp(){
         let r = this.register;
@@ -756,7 +740,7 @@ class PSG49 {
 
     step(){
 
-        let output = [];
+        let output : any = [];
         let clockStep = 0;
         let intStep = 0;
         let i = 0x0;
