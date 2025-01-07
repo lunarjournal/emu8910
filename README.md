@@ -1,6 +1,6 @@
 # emu8910
 
-This repository contains a `Typescript` implementation of General Instrument's [`AY8910`](https://en.wikipedia.org/wiki/General_Instrument_AY-3-8910) `PSG` (programmable sound generator).
+This repository contains a `Typescript` implementation of General Instrument's [`AY8910`](https://en.wikipedia.org/wiki/General_Instrument_AY-3-8910) `PSG` (programmable sound generator) in less than `1K` lines.
 
 It implements most of the `PSG's` original registers. <br>
 
