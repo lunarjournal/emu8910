@@ -509,7 +509,7 @@ class PSG49 {
 	  }
 	  
 	  return window;
-	}
+   }
 	
     gen_fir(num_taps : number, cutoff : number, fs : number) {
 	  const window = this.blackman_harris(num_taps);  // Blackman-Harris
@@ -530,7 +530,7 @@ class PSG49 {
 		filter[i] *= window[i];
 	  }
 	  return filter;
-    };
+    }
 
     clamp(){
         let r = this.register;
