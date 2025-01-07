@@ -1,6 +1,7 @@
+"use strict";
 /**
- * @file emu8910.js
- * @brief Tiny AY8910 PSG Emulator - emu8910.js
+ * @file emu8910.ts
+ * @brief Tiny AY8910 PSG Emulator - emu8910.ts
  *
  * Author: Dylan Müller
  *
@@ -48,94 +49,38 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-
-var YM_CLOCK_ZX = 1750000;
-var FIR = [-0.011368,
-    0.004512,
-    0.008657,
-    -0.011763,
-    -0.000000,
-    0.012786,
-    -0.010231,
-    -0.005801,
-    0.015915,
-    -0.006411,
-    -0.012504,
-    0.017299,
-    -0.000000,
-    -0.019605,
-    0.016077,
-    0.009370,
-    -0.026526,
-    0.011074,
-    0.022508,
-    -0.032676,
-    0.000000,
-    0.042011,
-    -0.037513,
-    -0.024362,
-    0.079577,
-    -0.040604,
-    -0.112540,
-    0.294080,
-    0.625000,
-    0.294080,
-    -0.112540,
-    -0.040604,
-    0.079577,
-    -0.024362,
-    -0.037513,
-    0.042011,
-    0.000000,
-    -0.032676,
-    0.022508,
-    0.011074,
-    -0.026526,
-    0.009370,
-    0.016077,
-    -0.019605,
-    -0.000000,
-    0.017299,
-    -0.012504,
-    -0.006411,
-    0.015915,
-    -0.005801,
-    -0.010231,
-    0.012786,
-    -0.000000,
-    -0.011763,
-    0.008657,
-    0.004512,
-    -0.011368];
-var Interpolator = /** @class */ (function () {
-    function Interpolator() {
+const YM_CLOCK_ZX = 1750000;
+const FIR_CUTOFF = 2000; // Hz
+const FIR_TAPS = 200; // N taps
+var FIR = []; // coeff
+class Interpolator {
+    constructor() {
         this.buffer = [];
-        for (var i = 0; i < 4; i++) {
+        for (let i = 0; i < 4; i++) {
             this.buffer[i] = 0x0;
         }
     }
-    Interpolator.prototype.step = function (x) {
-        var b = this.buffer;
+    step(x) {
+        let b = this.buffer;
         b[0] = b[1];
         b[1] = b[2];
         b[2] = b[3];
         b[3] = x;
-    };
-    Interpolator.prototype.cubic = function (mu) {
-        var b = this.buffer;
-        var a0, a1, a2, a3, mu2 = 0;
-        mu2 = mu * mu2;
+    }
+    cubic(mu) {
+        let b = this.buffer;
+        let a0, a1, a2, a3, mu2 = 0;
+        mu2 = mu * mu;
         a0 = b[3] - b[2] - b[0] + b[1];
         a1 = b[0] - b[1] - a0;
         a2 = b[2] - b[0];
         a3 = b[1];
         return (a0 * mu * mu2 + a1 * mu2 + a2 * mu + a3);
-    };
-    return Interpolator;
-}());
+    }
+}
 // DC filter
-var BiasFilter = /** @class */ (function () {
-    function BiasFilter(length, attenuate) {
+class BiasFilter {
+    constructor(length, attenuate) {
         this.samples = [];
         this.index = 0x0;
         this.length = 0x0;
@@ -143,16 +88,16 @@ var BiasFilter = /** @class */ (function () {
         this.attenuate = 0x0;
         this.length = length;
         this.sum = 0x0;
-        for (var i = 0; i < this.length; i++) {
+        for (let i = 0; i < this.length; i++) {
             this.samples[i] = 0x0;
         }
         this.attenuate = attenuate;
     }
-    BiasFilter.prototype.step = function (x) {
-        var index = this.index;
-        var delta = x - this.samples[index];
-        var attenuate = this.attenuate;
-        var avg = 0x0;
+    step(x) {
+        let index = this.index;
+        let delta = x - this.samples[index];
+        let attenuate = this.attenuate;
+        let avg = 0x0;
         this.sum += delta;
         this.samples[index] = x;
         if (++this.index > (this.length - 1)) {
@@ -160,11 +105,10 @@ var BiasFilter = /** @class */ (function () {
         }
         avg = this.sum / this.length;
         return (x - avg) * (1 / attenuate);
-    };
-    return BiasFilter;
-}());
-var FirFilter = /** @class */ (function () {
-    function FirFilter(h, m) {
+    }
+}
+class FirFilter {
+    constructor(h, m) {
         this.buffer = [];
         this.index = 0x0;
         this.offset = 0x0;
@@ -175,47 +119,50 @@ var FirFilter = /** @class */ (function () {
         this.index = 0;
         this.m = m;
         this.h = h;
-        var buffer = this.buffer;
-        for (var i = 0; i < this.length * 2; i++) {
+        let buffer = this.buffer;
+        for (let i = 0; i < this.length * 2; i++) {
             buffer[i] = 0x0;
         }
     }
-    FirFilter.prototype.step = function (samples) {
-        var index = this.index;
-        var buffer = this.buffer;
-        var length = this.length;
-        var m = this.m;
-        var h = this.h;
-        var y = 0x0;
-        var i = 0x0;
-        this.offset = length - (index * m);
-        var sub = buffer.slice(this.offset);
+    step(samples) {
+        let index = this.index;
+        let buffer = this.buffer;
+        let length = this.length;
+        let m = this.m;
+        let h = this.h;
+        let y = 0x0;
+        let i = 0x0;
+        let sub = [];
+        this.offset = (index * m) % length;
+        // Update the buffer with the current input samples
         for (i = 0; i < m; i++) {
-            buffer[this.offset + i - 1] = samples[i];
+            buffer[(this.offset + i) % length] = samples[i];
         }
+        // Create a 'sub' buffer that contains the most recent 'h.length' values in the circular buffer
         for (i = 0; i < h.length; i++) {
-            y += h[i] * (sub[i] + sub[h.length - i - 1]);
+            sub[i] = buffer[(this.offset - i + length) % length];
         }
-        for (i = 0; i < m; i++) {
-            buffer[this.offset + length - m + i] = buffer[this.offset + i];
+        // Perform the FIR filtering operation
+        for (i = 0; i < h.length; i++) {
+            y += h[i] * sub[i];
         }
-        this.index = (index + 1) % (length / m - 1);
+        // Update the index to the next position in the circular buffer
+        this.index = (index + 1) % (length / m);
         return y;
-    };
-    return FirFilter;
-}());
-var AudioDriver = /** @class */ (function () {
-    function AudioDriver(host) {
+    }
+}
+class AudioDriver {
+    constructor(host) {
         this.frequency = 0x0;
         this.update = function (ev) {
-            var ch0 = ev.outputBuffer.getChannelData(0);
-            var ch1 = ev.outputBuffer.getChannelData(1);
-            var host = this.host;
-            var filter = this.filter;
-            var bias = this.bias;
-            var output = [0, 0];
-            var port = [0, 0];
-            for (var i = 0; i < ch0.length; i++) {
+            let ch0 = ev.outputBuffer.getChannelData(0);
+            let ch1 = ev.outputBuffer.getChannelData(1);
+            let host = this.host;
+            let filter = this.filter;
+            let bias = this.bias;
+            let output = [0, 0];
+            let port = [0, 0];
+            for (let i = 0; i < ch0.length; i++) {
                 output = host.step();
                 port[0] = filter[0].step(output[0]);
                 port[1] = filter[1].step(output[1]);
@@ -224,14 +171,14 @@ var AudioDriver = /** @class */ (function () {
             }
         }.bind(this);
         this.device = new AudioContext();
-        var device = this.device;
+        let device = this.device;
         this.filter = [
             new BiasFilter(1024, 1.25),
             new BiasFilter(1024, 1.25),
             device.createBiquadFilter(),
             device.createBiquadFilter()
         ];
-        var filter = this.filter;
+        let filter = this.filter;
         filter[2].type = "lowshelf";
         filter[2].frequency.value = 10000;
         filter[2].gain.value = 2;
@@ -247,8 +194,7 @@ var AudioDriver = /** @class */ (function () {
         this.host = host;
         this.bias = 0;
     }
-    return AudioDriver;
-}());
+}
 var PSG49_LUT;
 (function (PSG49_LUT) {
     PSG49_LUT[PSG49_LUT["A_FINE"] = 0] = "A_FINE";
@@ -266,8 +212,8 @@ var PSG49_LUT;
     PSG49_LUT[PSG49_LUT["ENV_COARSE"] = 12] = "ENV_COARSE";
     PSG49_LUT[PSG49_LUT["ENV_SHAPE"] = 13] = "ENV_SHAPE";
 })(PSG49_LUT || (PSG49_LUT = {}));
-var PSG49 = /** @class */ (function () {
-    function PSG49(clockRate, intRate) {
+class PSG49 {
+    constructor(clockRate, intRate) {
         // main register file
         this.register = {
             A_FINE: 0x0, A_COARSE: 0x0,
@@ -292,7 +238,8 @@ var PSG49 = /** @class */ (function () {
             new Interpolator(),
             new Interpolator()
         ];
-        var m = 8;
+        let m = 8;
+        FIR = this.gen_fir(FIR_TAPS, FIR_CUTOFF, this.driver.device.sampleRate);
         this.fir = [
             new FirFilter(FIR, m),
             new FirFilter(FIR, m)
@@ -307,7 +254,7 @@ var PSG49 = /** @class */ (function () {
         this.interrupt = {
             frequency: intRate,
             cycle: 0,
-            routine: function () { }
+            routine: () => { }
         };
         this.envelope = {
             strobe: 0,
@@ -338,30 +285,30 @@ var PSG49 = /** @class */ (function () {
         this.build_dac(1.3, 40);
         this.build_adsr();
     }
-    PSG49.prototype.build_dac = function (decay, shift) {
-        var dac = this.dac;
-        var y = Math.sqrt(decay);
-        var z = shift / 31;
+    build_dac(decay, shift) {
+        let dac = this.dac;
+        let y = Math.sqrt(decay);
+        let z = shift / 31;
         dac[0] = 0;
         dac[1] = 0;
-        for (var i = 2; i <= 31; i++) {
+        for (let i = 2; i <= 31; i++) {
             dac[i] = 1.0 / Math.pow(y, shift - (z * i));
         }
-    };
-    PSG49.prototype.init_test = function () {
-        var r = this.register;
-        r.MIXER = 56;
+    }
+    init_test() {
+        let r = this.register;
+        r.MIXER = 0b00111000;
         r.A_VOL = 15;
         //r.A_VOL |= 0x10;
         r.A_FINE = 200;
         //r.ENV_COARSE = 200;
-    };
-    PSG49.prototype.build_adsr = function () {
-        var envelope = this.envelope;
-        var stub = envelope.stub;
-        stub.reset = function (ev) {
-            var strobe = ev.strobe;
-            var transient = ev.transient;
+    }
+    build_adsr() {
+        let envelope = this.envelope;
+        let stub = envelope.stub;
+        stub.reset = (ev) => {
+            let strobe = ev.strobe;
+            let transient = ev.transient;
             switch (ev.offset) {
                 case 0x4:
                     transient = 0;
@@ -381,19 +328,19 @@ var PSG49 = /** @class */ (function () {
                     break;
             }
         };
-        stub.grow = function (ev) {
+        stub.grow = (ev) => {
             if (++ev.step > 31) {
                 ev.strobe ^= 1;
                 ev.stub.reset(ev);
             }
         };
-        stub.decay = function (ev) {
+        stub.decay = (ev) => {
             if (--ev.step < 0) {
                 ev.strobe ^= 1;
                 ev.stub.reset(ev);
             }
         };
-        stub.hold = function (ev) { };
+        stub.hold = (ev) => { };
         envelope.matrix = [
             [stub.decay, stub.hold],
             [stub.grow, stub.hold],
@@ -402,9 +349,37 @@ var PSG49 = /** @class */ (function () {
             [stub.decay, stub.grow],
             [stub.grow, stub.decay],
         ];
-    };
-    PSG49.prototype.clamp = function () {
-        var r = this.register;
+    }
+    blackman_harris(N) {
+        let window = new Array(N);
+        for (let n = 0; n < N; n++) {
+            window[n] = 0.35875 - 0.48829 * Math.cos(2 * Math.PI * n / (N - 1)) +
+                0.14128 * Math.cos(4 * Math.PI * n / (N - 1)) -
+                0.01168 * Math.cos(6 * Math.PI * n / (N - 1));
+        }
+        return window;
+    }
+    gen_fir(num_taps, cutoff, fs) {
+        const window = this.blackman_harris(num_taps); // Blackman-Harris
+        const filter = new Array(num_taps);
+        for (let i = 0; i < num_taps; i++) {
+            // Calculate the ideal filter coefficients (sinc function)
+            const n = i - (num_taps - 1) / 2;
+            // Handle the special case when n == 0 to avoid division by zero
+            if (n === 0) {
+                filter[i] = 2 * Math.PI * cutoff / fs;
+            }
+            else {
+                filter[i] = Math.sin(2 * Math.PI * cutoff * n / fs) / (Math.PI * n);
+            }
+            // Apply window function
+            filter[i] *= window[i];
+        }
+        return filter;
+    }
+    ;
+    clamp() {
+        let r = this.register;
         r.A_FINE &= 0xff;
         r.B_FINE &= 0xff;
         r.C_FINE &= 0xff;
@@ -419,13 +394,13 @@ var PSG49 = /** @class */ (function () {
         r.NOISE_PERIOD &= 0x1f;
         r.MIXER &= 0x3f;
         r.ENV_SHAPE &= 0xff;
-    };
-    PSG49.prototype.map = function () {
-        var r = this.register;
-        var channel = this.channels;
-        var ev = this.envelope;
-        var toneMask = [0x1, 0x2, 0x4];
-        var noiseMask = [0x8, 0x10, 0x20];
+    }
+    map() {
+        let r = this.register;
+        let channel = this.channels;
+        let ev = this.envelope;
+        let toneMask = [0x1, 0x2, 0x4];
+        let noiseMask = [0x8, 0x10, 0x20];
         this.clamp();
         // update tone channel period
         channel[0].period = r.A_FINE | r.A_COARSE << 8;
@@ -434,12 +409,12 @@ var PSG49 = /** @class */ (function () {
         channel[0].volume = r.A_VOL & 0xf;
         channel[1].volume = r.B_VOL & 0xf;
         channel[2].volume = r.C_VOL & 0xf;
-        for (var i = 0; i < 3; i++) {
-            var bit = r.MIXER & toneMask[i];
+        for (let i = 0; i < 3; i++) {
+            let bit = r.MIXER & toneMask[i];
             channel[i].tone = bit ? 1 : 0;
         }
-        for (var i = 0; i < 3; i++) {
-            var bit = r.MIXER & noiseMask[i];
+        for (let i = 0; i < 3; i++) {
+            let bit = r.MIXER & noiseMask[i];
             channel[i].noise = bit ? 1 : 0;
         }
         channel[0].envelope = (r.A_VOL & 0x10) ? 0 : 1;
@@ -496,12 +471,12 @@ var PSG49 = /** @class */ (function () {
             ev.stub.reset(ev);
         }
         ev.store = r.ENV_SHAPE;
-    };
-    PSG49.prototype.step_tone = function (index) {
-        var ch = this.channels[index % 3];
-        var step = this.clock.step;
-        var port = ch.port;
-        var period = (ch.period == 0x0) ? 0x1 : ch.period;
+    }
+    step_tone(index) {
+        let ch = this.channels[index % 3];
+        let step = this.clock.step;
+        let port = ch.port;
+        let period = (ch.period == 0x0) ? 0x1 : ch.period;
         ch.counter += step;
         if (ch.counter >= period) {
             // 50% duty cycle
@@ -510,22 +485,22 @@ var PSG49 = /** @class */ (function () {
             ch.counter = 0x0;
         }
         return ch.port;
-    };
-    PSG49.prototype.step_envelope = function () {
-        var step = this.clock.step;
-        var ev = this.envelope;
+    }
+    step_envelope() {
+        let step = this.clock.step;
+        let ev = this.envelope;
         ev.counter += step;
         if (ev.counter >= ev.period) {
             ev.matrix[ev.offset][ev.strobe](ev);
             ev.counter = 0x0;
         }
         return (ev.step);
-    };
-    PSG49.prototype.step_noise = function () {
-        var ch = this.channels[3];
-        var step = this.clock.step;
-        var port = ch.port;
-        var period = (ch.period == 0) ? 1 : ch.period;
+    }
+    step_noise() {
+        let ch = this.channels[3];
+        let step = this.clock.step;
+        let port = ch.port;
+        let period = (ch.period == 0) ? 1 : ch.period;
         ch.counter += step;
         if (ch.counter >= period) {
             port ^= (((port & 1) ^ ((port >> 3) & 1)) << 17);
@@ -534,17 +509,17 @@ var PSG49 = /** @class */ (function () {
             ch.counter = 0x0;
         }
         return ch.port & 1;
-    };
-    PSG49.prototype.step_mixer = function () {
-        var port = 0x0;
-        var output = [0.0, 0.0];
-        var index = 0x0;
-        var ch = this.channels;
-        var noise = this.step_noise();
-        var step = this.step_envelope();
-        for (var i = 0; i < 3; i++) {
-            var volume = ch[i].volume;
-            var pan = ch[i].pan;
+    }
+    step_mixer() {
+        let port = 0x0;
+        let output = [0.0, 0.0];
+        let index = 0x0;
+        let ch = this.channels;
+        let noise = this.step_noise();
+        let step = this.step_envelope();
+        for (let i = 0; i < 3; i++) {
+            let volume = ch[i].volume;
+            let pan = ch[i].pan;
             port = this.step_tone(i) | ch[i].tone;
             port &= noise | ch[i].noise;
             // todo: add dac volume table
@@ -569,22 +544,22 @@ var PSG49 = /** @class */ (function () {
             output[1] += port * (pan);
         }
         return output;
-    };
-    PSG49.prototype.step = function () {
-        var output = [];
-        var clockStep = 0;
-        var intStep = 0;
-        var i = 0x0;
-        var clock = this.clock;
-        var driver = this.driver;
-        var fir = this.fir;
-        var oversample = this.oversample;
-        var interpolate = this.interpolate;
-        var interrupt = this.interrupt;
-        var x = clock.scale;
-        var fc = clock.frequency;
-        var fd = driver.frequency;
-        var fi = interrupt.frequency;
+    }
+    step() {
+        let output = [];
+        let clockStep = 0;
+        let intStep = 0;
+        let i = 0x0;
+        let clock = this.clock;
+        let driver = this.driver;
+        let fir = this.fir;
+        let oversample = this.oversample;
+        let interpolate = this.interpolate;
+        let interrupt = this.interrupt;
+        let x = clock.scale;
+        let fc = clock.frequency;
+        let fd = driver.frequency;
+        let fi = interrupt.frequency;
         clockStep = (fc * x) / fd;
         clock.step = clockStep / oversample;
         intStep = fi / fd;
@@ -592,8 +567,8 @@ var PSG49 = /** @class */ (function () {
         interrupt.cycle += intStep;
         // do we have clock cycles to process?
         // if so process single clock cycle
-        var sample_left = [];
-        var sample_right = [];
+        let sample_left = [];
+        let sample_right = [];
         for (i = 0; i < oversample; i++) {
             sample_left[i] = 0x0;
             sample_right[i] = 0x0;
@@ -603,7 +578,7 @@ var PSG49 = /** @class */ (function () {
             interrupt.routine();
             interrupt.cycle = 0;
         }
-        for (var i_1 = 0; i_1 < oversample; i_1++) {
+        for (let i = 0; i < oversample; i++) {
             clock.cycle += clockStep;
             if (clock.cycle > 1) {
                 clock.cycle--;
@@ -612,12 +587,11 @@ var PSG49 = /** @class */ (function () {
                 interpolate[0].step(output[0]);
                 interpolate[1].step(output[1]);
             }
-            sample_left[i_1] = interpolate[0].cubic(0.5);
-            sample_right[i_1] = interpolate[1].cubic(0.5);
+            sample_left[i] = interpolate[0].cubic(0.5);
+            sample_right[i] = interpolate[1].cubic(0.5);
         }
         output[0] = fir[0].step(sample_left);
         output[1] = fir[1].step(sample_right);
         return output;
-    };
-    return PSG49;
-}());
+    }
+}
