@@ -50,6 +50,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 const YM_CLOCK_ZX = 1750000;
+const CUBIC_INTERPOL = 0.5;
 const FIR_CUTOFF = 2000; // Hz
 const FIR_TAPS = 200; // N taps
 var FIR = []; // coeff
@@ -587,8 +588,8 @@ class PSG49 {
                 interpolate[0].step(output[0]);
                 interpolate[1].step(output[1]);
             }
-            sample_left[i] = interpolate[0].cubic(0.5);
-            sample_right[i] = interpolate[1].cubic(0.5);
+            sample_left[i] = interpolate[0].cubic(CUBIC_INTERPOL);
+            sample_right[i] = interpolate[1].cubic(CUBIC_INTERPOL);
         }
         output[0] = fir[0].step(sample_left);
         output[1] = fir[1].step(sample_right);
