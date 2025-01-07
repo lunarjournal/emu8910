@@ -50,6 +50,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 const YM_CLOCK_ZX = 1750000;
+const DAC_DECAY = 1.3;
+const DAC_SHIFT = 40;
 const CUBIC_INTERPOL = 0.5;
 const FIR_CUTOFF = 2000; // Hz
 const FIR_TAPS = 200; // N taps
@@ -283,7 +285,7 @@ class PSG49 {
         // seed noise generator
         this.channels[3].port = 0x1;
         this.dac = [];
-        this.build_dac(1.3, 40);
+        this.build_dac(DAC_DECAY, DAC_SHIFT);
         this.build_adsr();
     }
     build_dac(decay, shift) {
