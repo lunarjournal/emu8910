@@ -53,8 +53,8 @@ const YM_CLOCK_ZX = 1750000;
 const DAC_DECAY = 1.3;
 const DAC_SHIFT = 40;
 const CUBIC_INTERPOL = 0.5;
-const FIR_CUTOFF = 2000; // Hz
-const FIR_TAPS = 200; // N taps
+const FIR_CUTOFF = 2100; // Hz
+const FIR_TAPS = 50; // N taps
 var FIR = []; // coeff
 class Interpolator {
     constructor() {
