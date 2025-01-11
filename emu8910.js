@@ -55,6 +55,7 @@ const DAC_SHIFT = 40;
 const CUBIC_INTERPOL = 0.5;
 const FIR_CUTOFF = 2100; // Hz
 const FIR_TAPS = 50; // N taps
+const WAVE_OVERSAMPLE = 8;
 var FIR = []; // coeff
 class Interpolator {
     constructor() {
@@ -241,7 +242,7 @@ class PSG49 {
             new Interpolator(),
             new Interpolator()
         ];
-        let m = 8;
+        let m = WAVE_OVERSAMPLE;
         FIR = this.gen_fir(FIR_TAPS, FIR_CUTOFF, this.driver.device.sampleRate);
         this.fir = [
             new FirFilter(FIR, m),
