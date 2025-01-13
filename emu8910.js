@@ -50,13 +50,18 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 const YM_CLOCK_ZX = 1750000;
+
 const DAC_DECAY = 1.3;
 const DAC_SHIFT = 40;
+
 const CUBIC_INTERPOL = 0.5;
+
 const FIR_CUTOFF = 2100; // Hz
 const FIR_TAPS = 50; // N taps
+
 const WAVE_OVERSAMPLE = 8;
 var FIR = []; // coeff
+
 class Interpolator {
     constructor() {
         this.buffer = [];
