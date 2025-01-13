@@ -178,23 +178,13 @@ class AudioDriver {
         let device = this.device;
         this.filter = [
             new BiasFilter(1024, 1.25),
-            new BiasFilter(1024, 1.25),
-            device.createBiquadFilter(),
-            device.createBiquadFilter()
+            new BiasFilter(1024, 1.25)
         ];
         let filter = this.filter;
-        filter[2].type = "lowshelf";
-        filter[2].frequency.value = 10000;
-        filter[2].gain.value = 2;
-        filter[3].type = "lowpass";
-        filter[3].frequency.value = 10000;
-        filter[3].Q.value = 1;
         this.frequency = device.sampleRate;
         this.context = device.createScriptProcessor(4096, 0, 2);
         this.context.onaudioprocess = this.update;
-        this.context.connect(filter[2]);
-        filter[2].connect(filter[3]);
-        filter[3].connect(device.destination);
+        this.context.connect(device.destination);
         this.host = host;
         this.bias = 0;
     }
