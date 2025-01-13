@@ -189,23 +189,7 @@ class AudioDriver {
         this.bias = 0;
     }
 }
-var PSG49_LUT;
-(function (PSG49_LUT) {
-    PSG49_LUT[PSG49_LUT["A_FINE"] = 0] = "A_FINE";
-    PSG49_LUT[PSG49_LUT["A_COARSE"] = 1] = "A_COARSE";
-    PSG49_LUT[PSG49_LUT["B_FINE"] = 2] = "B_FINE";
-    PSG49_LUT[PSG49_LUT["B_COARSE"] = 3] = "B_COARSE";
-    PSG49_LUT[PSG49_LUT["C_FINE"] = 4] = "C_FINE";
-    PSG49_LUT[PSG49_LUT["C_COARSE"] = 5] = "C_COARSE";
-    PSG49_LUT[PSG49_LUT["NOISE_PERIOD"] = 6] = "NOISE_PERIOD";
-    PSG49_LUT[PSG49_LUT["MIXER"] = 7] = "MIXER";
-    PSG49_LUT[PSG49_LUT["A_VOL"] = 8] = "A_VOL";
-    PSG49_LUT[PSG49_LUT["B_VOL"] = 9] = "B_VOL";
-    PSG49_LUT[PSG49_LUT["C_VOL"] = 10] = "C_VOL";
-    PSG49_LUT[PSG49_LUT["ENV_FINE"] = 11] = "ENV_FINE";
-    PSG49_LUT[PSG49_LUT["ENV_COARSE"] = 12] = "ENV_COARSE";
-    PSG49_LUT[PSG49_LUT["ENV_SHAPE"] = 13] = "ENV_SHAPE";
-})(PSG49_LUT || (PSG49_LUT = {}));
+
 class PSG49 {
     constructor(clockRate, intRate) {
         // main register file
