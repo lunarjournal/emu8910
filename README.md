@@ -43,7 +43,7 @@ emu8910.register.ENV_SHAPE
 
 The `register` file is then used to control the `PSG` or extract state information.
 
-To play a FYM module:
+To play a `FYM` module:
 ```
 song = new FYMReader(<BUFFER>);
 emu8910.interrupt.routine = <ISR_FUNC>
