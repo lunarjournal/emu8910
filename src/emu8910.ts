@@ -289,21 +289,6 @@ class AudioDriver {
     }.bind(this);
 }
 
-enum PSG49_LUT{
-
-    A_FINE, A_COARSE,
-    B_FINE, B_COARSE,
-    C_FINE, C_COARSE,
-    NOISE_PERIOD,
-    MIXER,
-    A_VOL,
-    B_VOL,
-    C_VOL,
-    ENV_FINE,
-    ENV_COARSE,
-    ENV_SHAPE
-
-}
 class PSG49 {
 
     clock : Oscillator;
