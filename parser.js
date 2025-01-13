@@ -11,7 +11,7 @@
     loadAndPlay = function() {
         emu8910.driver.device.resume()
         var oReq = new XMLHttpRequest();
-        oReq.open('GET', 'music/' + songs[currentSong], true);
+        oReq.open('GET', 'modules/' + songs[currentSong], true);
         oReq.responseType = 'arraybuffer';
         oReq.onload = function(e) {
             if(oReq.response) play(oReq.response);
